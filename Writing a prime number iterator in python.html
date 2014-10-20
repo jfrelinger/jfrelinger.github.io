@@ -22,10 +22,10 @@
 
 
     <!-- Bootstrap -->
-        <link rel="stylesheet" href="http://jfrelinger.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+        <link rel="stylesheet" href="http://jfrelinger.github.io/theme/css/bootstrap.flatly.min.css" type="text/css"/>
     <link href="http://jfrelinger.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="http://jfrelinger.github.io/theme/css/pygments/native.css" rel="stylesheet">
+    <link href="http://jfrelinger.github.io/theme/css/pygments/solarizedlight.css" rel="stylesheet">
         <link href="http://jfrelinger.github.io/theme/css/typogrify.css" rel="stylesheet">
     <link rel="stylesheet" href="http://jfrelinger.github.io/theme/css/style.css" type="text/css"/>
 
@@ -138,11 +138,28 @@ Jacob Frelinger's Blog            </a>
 <div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PrimeIter</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
     <span class="k">print</span> <span class="n">i</span><span class="p">,</span>
 </pre></div>
-<p>which will print out all the prime number below&nbsp;1000.</p>
-<p>Note the iterator could be optimised, counting by 2 once it&#8217;s past 3, and it only would need to test for division for past primes upto the square root of the proposed value.  None the less, this shows a little of the power writing custom&nbsp;iterators.</p>
+<p>which will print out all the prime numbers below&nbsp;1000.</p>
+<p>Note the iterator could be optimised, counting by 2 once it&#8217;s past 3, and it only would need to perform the division test for past primes up to the square root of the proposed value.  None the less, this shows a little of the power that custom iterators can&nbsp;acheive.</p>
 
             </div>
             <!-- /.entry-content -->
+	    <div id="commentswrap">
+<div id="comments"></div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="https://apis.google.com/js/plusone.js"></script>
+    <script>
+        $(document).ready(function () {
+            gapi.comments.render('comments', {
+                href: window.location,
+                width: '600',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
+    });
+    </script>
+
         </article>
     </section>
 
@@ -169,13 +186,13 @@ Jacob Frelinger's Blog            </a>
                             </a>
                         </li>
                         <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/iterators.html">
-                                iterators
+                            <a href="http://jfrelinger.github.io/tag/python.html">
+                                python
                             </a>
                         </li>
                         <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/python.html">
-                                python
+                            <a href="http://jfrelinger.github.io/tag/iterators.html">
+                                iterators
                             </a>
                         </li>
                     </ul>
