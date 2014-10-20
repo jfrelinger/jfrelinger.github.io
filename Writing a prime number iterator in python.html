@@ -143,6 +143,22 @@ Jacob Frelinger's Blog            </a>
 
             </div>
             <!-- /.entry-content -->
+	    <div id="commentswrap">
+		<div id="comments"></div>
+	    </div>
+	    
+    <script src="https://apis.google.com/js/plusone.js"></script>
+    <script>
+        $(document).ready(function () {
+            gapi.comments.render('comments', {
+                href: window.location,
+                width: '600',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
+    });
+    </script>
+
         </article>
     </section>
 
@@ -164,11 +180,6 @@ Jacob Frelinger's Blog            </a>
                 <li class="list-group-item"><a href="http://jfrelinger.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                     <ul class="list-group " id="tags">
                         <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/python.html">
-                                python
-                            </a>
-                        </li>
-                        <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/prime-numbers.html">
                                 prime numbers
                             </a>
@@ -176,6 +187,11 @@ Jacob Frelinger's Blog            </a>
                         <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/iterators.html">
                                 iterators
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/python.html">
+                                python
                             </a>
                         </li>
                     </ul>
