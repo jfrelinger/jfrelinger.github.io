@@ -134,6 +134,12 @@ Jacob Frelinger's Blog            </a>
             <span class="k">if</span> <span class="n">keep</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
 </pre></div>
+<p>This allows the iterator to be used as the&nbsp;following</p>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PrimeItor</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">i</span><span class="p">,</span>
+</pre></div>
+<p>which will print out all the prime number below&nbsp;1000.</p>
+<p>Note the iterator could be optimised, counting by 2 once it&#8217;s past 3, and it only would need to test for division for past primes upto the square root of the proposed value.  None the less, this shows a little of the power writing custom&nbsp;iterators.</p>
 
             </div>
             <!-- /.entry-content -->
@@ -158,11 +164,6 @@ Jacob Frelinger's Blog            </a>
                 <li class="list-group-item"><a href="http://jfrelinger.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                     <ul class="list-group " id="tags">
                         <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/prime-numbers.html">
-                                prime numbers
-                            </a>
-                        </li>
-                        <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/python.html">
                                 python
                             </a>
@@ -170,6 +171,11 @@ Jacob Frelinger's Blog            </a>
                         <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/iterators.html">
                                 iterators
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/prime-numbers.html">
+                                prime numbers
                             </a>
                         </li>
                     </ul>
