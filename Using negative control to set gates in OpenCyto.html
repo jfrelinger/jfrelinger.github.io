@@ -10,11 +10,11 @@
 
 
 
-<link rel="canonical" href="http://jfrelinger.github.io/Writing a prime number iterator in python.html">
+<link rel="canonical" href="http://jfrelinger.github.io/Using negative control to set gates in OpenCyto.html">
 
         <meta name="author" content="Jacob Frelinger" />
-        <meta name="keywords" content="python,prime numbers,iterators" />
-        <meta name="description" content="Writing a prime number iterator in python" />
+        <meta name="keywords" content="R,OpenCyto" />
+        <meta name="description" content="Using negative controls to set gate placement is common in flow cytometry. OpenCyto provides mechanisms to do such gating by use of preprocessing and custom gating functions." />
 
     <!-- Enable latex plugin -->
 
@@ -33,8 +33,8 @@
               title="Jacob Frelinger's Blog ATOM Feed"/>
 
 
-        <link href="http://jfrelinger.github.io/feeds/python, programing.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Jacob Frelinger's Blog python, programing ATOM Feed"/>
+        <link href="http://jfrelinger.github.io/feeds/R, programing, OpenCyto, Flow Cytometry.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Jacob Frelinger's Blog R, programing, OpenCyto, Flow Cytometry ATOM Feed"/>
 
 </head>
 <body>
@@ -59,10 +59,10 @@ Jacob Frelinger's Blog            </a>
                          <li><a href="http://jfrelinger.github.io/pages/cv.html">
                              <span class="caps">C.V.</span>
                           </a></li>
-                        <li class="active">
+                        <li >
                             <a href="http://jfrelinger.github.io/category/python-programing.html">Python, programing</a>
                         </li>
-                        <li >
+                        <li class="active">
                             <a href="http://jfrelinger.github.io/category/r-programing-opencyto-flow-cytometry.html">R, programing, opencyto, flow cytometry</a>
                         </li>
             </ul>
@@ -82,7 +82,7 @@ Jacob Frelinger's Blog            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://jfrelinger.github.io/Writing a prime number iterator in python.html"
+                    <a href="http://jfrelinger.github.io/Using negative control to set gates in OpenCyto.html"
                        rel="bookmark"
                        title="Permalink to ">
                         
@@ -95,54 +95,40 @@ Jacob Frelinger's Blog            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2014-10-19T18:40:00"> Sun 19 October 2014</time>
+        <i class="fa fa-calendar"></i><time datetime="2014-10-20T20:00:00"> Mon 20 October 2014</time>
     </span>
 
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://jfrelinger.github.io/tag/python.html">python</a>
+	<a href="http://jfrelinger.github.io/tag/r.html">R</a>
         /
-	<a href="http://jfrelinger.github.io/tag/prime-numbers.html">prime numbers</a>
-        /
-	<a href="http://jfrelinger.github.io/tag/iterators.html">iterators</a>
+	<a href="http://jfrelinger.github.io/tag/opencyto.html">OpenCyto</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>One of <a class="reference external" href="http://www.codeeval.com">CodeEval.com&#8217;s</a> challenges involves finding prime numbers that are a palindrome.  Instead of the usual method of generating the fixed sets of prime numbers, I thought it would employ writing a  <a class="reference external" href="http://www.python.org">Python</a> iterator to generate the prime numbers to abstract it out.  The code below accepts an upper bound so the iterator stops eventually and uses a <a class="reference external" href="http://en.wikipedia.org/wiki/Trial_division">trial division</a> algorithm to find all the&nbsp;primes.</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">PrimeIter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        generate prime numbers up to &#39;n&#39;</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">n</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">2</span> <span class="c"># 2 is smallest prime number</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">primes</span> <span class="o">=</span> <span class="p">[]</span>
+                <p>In many case/control experiments in flow cytometry, for example pre and post
+treatment samples, gates often are placed at specified quantiles (typically 99%) to identify differences in between the case and control tubes.  This can be done in <a class="reference external" href="http://opencyto.org">OpenCyto</a> by using a preprocessing function to identify events from the control, and then only use those events to perform a quantile&nbsp;gate.</p>
+<p>The code below expects samples to be collapsed by patient and samples to have
+pData that sets a boolean variable called control that indicates which sample
+is control.  Then in your template file, you set the gating method to
+&#8216;negGate&#8217;, and the preprocessing function to&nbsp;&#8216;ppnegGate&#8217;</p>
+<div class="highlight"><pre>.negGate &lt;- function(fr, pp_res, xChannel=NA, yChannel=NA, filterId=&quot;ppgate&quot;, ...){
+    my_gate &lt;- openCyto:::quantileGate(fr[pp_res,],stain=yChannel, filter_id=filterId, ...)
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span>
+    return(my_gate)
+}
+registerPlugins(fun=.negGate,methodName=&#39;negGate&#39;,dep=NA)
 
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">)</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">StopIteration</span>
-            <span class="n">keep</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">primes</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">%</span> <span class="n">j</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="c"># if divisible by any previous prime it is not prime</span>
-                    <span class="n">keep</span> <span class="o">=</span> <span class="bp">False</span>
-                    <span class="k">break</span>
-            <span class="k">if</span> <span class="n">keep</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+.ppnegGate &lt;- function(fs, gs, gm, xChannel, yChannel, groupBy, isCollapse, ...) {
+    d &lt;- c()
+    for(i in c(1:length(fs))) {
+        d = c(d,rep.int(pData(fs[i])$control,nrow(exprs(fs[[i]]))))
+    }
+    return(as.logical(d))
+}
+registerPlugins(fun=.ppnegGate, methodName=&#39;ppnegGate&#39;, dep=NA, &quot;preprocessing&quot;)
 </pre></div>
-<p>This allows the iterator to be used as the&nbsp;following</p>
-<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PrimeIter</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
-    <span class="k">print</span> <span class="n">i</span><span class="p">,</span>
-</pre></div>
-<p>which will print out all the prime numbers below&nbsp;1000.</p>
-<p>Note the iterator could be optimised, counting by 2 once it&#8217;s past 3, and it only would need to perform the division test for past primes up to the square root of the proposed value.  None the less, this shows a little of the power that custom iterators can&nbsp;achieve.</p>
 
             </div>
             <!-- /.entry-content -->

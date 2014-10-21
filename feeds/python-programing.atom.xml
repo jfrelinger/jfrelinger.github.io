@@ -32,5 +32,5 @@
     &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;which will print out all the prime numbers below&amp;nbsp;1000.&lt;/p&gt;
-&lt;p&gt;Note the iterator could be optimised, counting by 2 once it&amp;#8217;s past 3, and it only would need to perform the division test for past primes up to the square root of the proposed value.  None the less, this shows a little of the power that custom iterators can&amp;nbsp;acheive.&lt;/p&gt;
+&lt;p&gt;Note the iterator could be optimised, counting by 2 once it&amp;#8217;s past 3, and it only would need to perform the division test for past primes up to the square root of the proposed value.  None the less, this shows a little of the power that custom iterators can&amp;nbsp;achieve.&lt;/p&gt;
 </summary><category term="python"></category><category term="prime numbers"></category><category term="iterators"></category></entry></feed>
