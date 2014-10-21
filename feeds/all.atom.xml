@@ -5,24 +5,63 @@ treatment samples, gates often are placed at specified quantiles (typically 99%)
 pData that sets a boolean variable called control that indicates which sample
 is control.  Then in your template file, you set the gating method to
 &amp;#8216;negGate&amp;#8217;, and the preprocessing function to&amp;nbsp;&amp;#8216;ppnegGate&amp;#8217;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;.negGate &amp;lt;- function(fr, pp_res, xChannel=NA, yChannel=NA, filterId=&amp;quot;ppgate&amp;quot;, ...){
-    my_gate &amp;lt;- openCyto:::quantileGate(fr[pp_res,],stain=yChannel, filter_id=filterId, ...)
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;.negGate &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;fr&lt;span class="p"&gt;,&lt;/span&gt; pp_res&lt;span class="p"&gt;,&lt;/span&gt; xChannel&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;NA&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; yChannel&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;NA&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; filterId&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;ppgate&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    my_gate &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; openCyto&lt;span class="o"&gt;:::&lt;/span&gt;quantileGate&lt;span class="p"&gt;(&lt;/span&gt;fr&lt;span class="p"&gt;[&lt;/span&gt;pp_res&lt;span class="p"&gt;,],&lt;/span&gt;stain&lt;span class="o"&gt;=&lt;/span&gt;yChannel&lt;span class="p"&gt;,&lt;/span&gt; filter_id&lt;span class="o"&gt;=&lt;/span&gt;filterId&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-    return(my_gate)
-}
-registerPlugins(fun=.negGate,methodName=&amp;#39;negGate&amp;#39;,dep=NA)
+    &lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;my_gate&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+registerPlugins&lt;span class="p"&gt;(&lt;/span&gt;fun&lt;span class="o"&gt;=&lt;/span&gt;.negGate&lt;span class="p"&gt;,&lt;/span&gt;methodName&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;negGate&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;dep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;NA&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-.ppnegGate &amp;lt;- function(fs, gs, gm, xChannel, yChannel, groupBy, isCollapse, ...) {
-    d &amp;lt;- c()
-    for(i in c(1:length(fs))) {
-        d = c(d,rep.int(pData(fs[i])$control,nrow(exprs(fs[[i]]))))
-    }
-    return(as.logical(d))
-}
-registerPlugins(fun=.ppnegGate, methodName=&amp;#39;ppnegGate&amp;#39;, dep=NA, &amp;quot;preprocessing&amp;quot;)
+.ppnegGate &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;fs&lt;span class="p"&gt;,&lt;/span&gt; gs&lt;span class="p"&gt;,&lt;/span&gt; gm&lt;span class="p"&gt;,&lt;/span&gt; xChannel&lt;span class="p"&gt;,&lt;/span&gt; yChannel&lt;span class="p"&gt;,&lt;/span&gt; groupBy&lt;span class="p"&gt;,&lt;/span&gt; isCollapse&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    d &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; c&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="kr"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;i &lt;span class="kr"&gt;in&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;length&lt;span class="p"&gt;(&lt;/span&gt;fs&lt;span class="p"&gt;)))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        d &lt;span class="o"&gt;=&lt;/span&gt; c&lt;span class="p"&gt;(&lt;/span&gt;d&lt;span class="p"&gt;,&lt;/span&gt;rep.int&lt;span class="p"&gt;(&lt;/span&gt;pData&lt;span class="p"&gt;(&lt;/span&gt;fs&lt;span class="p"&gt;[&lt;/span&gt;i&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="o"&gt;$&lt;/span&gt;control&lt;span class="p"&gt;,&lt;/span&gt;nrow&lt;span class="p"&gt;(&lt;/span&gt;exprs&lt;span class="p"&gt;(&lt;/span&gt;fs&lt;span class="p"&gt;[[&lt;/span&gt;i&lt;span class="p"&gt;]]))))&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="kr"&gt;return&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;as.logical&lt;span class="p"&gt;(&lt;/span&gt;d&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+registerPlugins&lt;span class="p"&gt;(&lt;/span&gt;fun&lt;span class="o"&gt;=&lt;/span&gt;.ppnegGate&lt;span class="p"&gt;,&lt;/span&gt; methodName&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;ppnegGate&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; dep&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;NA&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;preprocessing&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</summary><category term="R"></category><category term="OpenCyto"></category></entry><entry><title></title><link href="http://jfrelinger.github.io/Writing%20a%20prime%20number%20iterator%20in%20python.html" rel="alternate"></link><updated>2014-10-19T18:40:00-07:00</updated><author><name>Jacob Frelinger</name></author><id>tag:jfrelinger.github.io,2014-10-19:Writing a prime number iterator in python.html</id><summary type="html">&lt;p&gt;One of &lt;a class="reference external" href="http://www.codeeval.com"&gt;CodeEval.com&amp;#8217;s&lt;/a&gt; challenges involves finding prime numbers that are a palindrome.  Instead of the usual method of generating the fixed sets of prime numbers, I thought it would employ writing a  &lt;a class="reference external" href="http://www.python.org"&gt;Python&lt;/a&gt; iterator to generate the prime numbers to abstract it out.  The code below accepts an upper bound so the iterator stops eventually and uses a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Trial_division"&gt;trial division&lt;/a&gt; algorithm to find all the&amp;nbsp;primes.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PrimeIter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</summary><category term="R"></category><category term="OpenCyto"></category></entry><entry><title></title><link href="http://jfrelinger.github.io/Writing%20a%20prime%20number%20iterator%20in%20python.html" rel="alternate"></link><updated>2014-10-19T18:40:00-07:00</updated><author><name>Jacob Frelinger</name></author><id>tag:jfrelinger.github.io,2014-10-19:Writing a prime number iterator in python.html</id><summary type="html">&lt;p&gt;One of &lt;a class="reference external" href="http://www.codeeval.com"&gt;CodeEval.com&amp;#8217;s&lt;/a&gt; challenges involves finding prime numbers that are a palindrome.  Instead of the usual method of generating the fixed sets of prime numbers, I thought it would employ writing a  &lt;a class="reference external" href="http://www.python.org"&gt;Python&lt;/a&gt; iterator to generate the prime numbers to abstract it out.  The code below accepts an upper bound so the iterator stops eventually and uses a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Trial_division"&gt;trial division&lt;/a&gt; algorithm to find all the&amp;nbsp;primes.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PrimeIter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="sd"&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
 &lt;span class="sd"&gt;        generate prime numbers up to &amp;#39;n&amp;#39;&lt;/span&gt;
@@ -49,10 +88,11 @@ registerPlugins(fun=.ppnegGate, methodName=&amp;#39;ppnegGate&amp;#39;, dep=NA, 
             &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;keep&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
                 &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;current&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This allows the iterator to be used as the&amp;nbsp;following&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;PrimeIter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This allows the iterator to be used as the&amp;nbsp;following&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;PrimeIter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;which will print out all the prime numbers below&amp;nbsp;1000.&lt;/p&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;which will print out all the prime numbers below&amp;nbsp;1000.&lt;/p&gt;
 &lt;p&gt;Note the iterator could be optimised, counting by 2 once it&amp;#8217;s past 3, and it only would need to perform the division test for past primes up to the square root of the proposed value.  None the less, this shows a little of the power that custom iterators can&amp;nbsp;achieve.&lt;/p&gt;
 </summary><category term="python"></category><category term="prime numbers"></category><category term="iterators"></category></entry></feed>

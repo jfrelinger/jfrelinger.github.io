@@ -110,23 +110,37 @@ treatment samples, gates often are placed at specified quantiles (typically 99%)
 pData that sets a boolean variable called control that indicates which sample
 is control.  Then in your template file, you set the gating method to
 &#8216;negGate&#8217;, and the preprocessing function to&nbsp;&#8216;ppnegGate&#8217;</p>
-<div class="highlight"><pre>.negGate &lt;- function(fr, pp_res, xChannel=NA, yChannel=NA, filterId=&quot;ppgate&quot;, ...){
-    my_gate &lt;- openCyto:::quantileGate(fr[pp_res,],stain=yChannel, filter_id=filterId, ...)
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre>.negGate <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>fr<span class="p">,</span> pp_res<span class="p">,</span> xChannel<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> yChannel<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> filterId<span class="o">=</span><span class="s">&quot;ppgate&quot;</span><span class="p">,</span> <span class="kc">...</span><span class="p">){</span>
+    my_gate <span class="o">&lt;-</span> openCyto<span class="o">:::</span>quantileGate<span class="p">(</span>fr<span class="p">[</span>pp_res<span class="p">,],</span>stain<span class="o">=</span>yChannel<span class="p">,</span> filter_id<span class="o">=</span>filterId<span class="p">,</span> <span class="kc">...</span><span class="p">)</span>
 
-    return(my_gate)
-}
-registerPlugins(fun=.negGate,methodName=&#39;negGate&#39;,dep=NA)
+    <span class="kr">return</span><span class="p">(</span>my_gate<span class="p">)</span>
+<span class="p">}</span>
+registerPlugins<span class="p">(</span>fun<span class="o">=</span>.negGate<span class="p">,</span>methodName<span class="o">=</span><span class="s">&#39;negGate&#39;</span><span class="p">,</span>dep<span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
 
-.ppnegGate &lt;- function(fs, gs, gm, xChannel, yChannel, groupBy, isCollapse, ...) {
-    d &lt;- c()
-    for(i in c(1:length(fs))) {
-        d = c(d,rep.int(pData(fs[i])$control,nrow(exprs(fs[[i]]))))
-    }
-    return(as.logical(d))
-}
-registerPlugins(fun=.ppnegGate, methodName=&#39;ppnegGate&#39;, dep=NA, &quot;preprocessing&quot;)
+.ppnegGate <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>fs<span class="p">,</span> gs<span class="p">,</span> gm<span class="p">,</span> xChannel<span class="p">,</span> yChannel<span class="p">,</span> groupBy<span class="p">,</span> isCollapse<span class="p">,</span> <span class="kc">...</span><span class="p">)</span> <span class="p">{</span>
+    d <span class="o">&lt;-</span> c<span class="p">()</span>
+    <span class="kr">for</span><span class="p">(</span>i <span class="kr">in</span> c<span class="p">(</span><span class="m">1</span><span class="o">:</span>length<span class="p">(</span>fs<span class="p">)))</span> <span class="p">{</span>
+        d <span class="o">=</span> c<span class="p">(</span>d<span class="p">,</span>rep.int<span class="p">(</span>pData<span class="p">(</span>fs<span class="p">[</span>i<span class="p">])</span><span class="o">$</span>control<span class="p">,</span>nrow<span class="p">(</span>exprs<span class="p">(</span>fs<span class="p">[[</span>i<span class="p">]]))))</span>
+    <span class="p">}</span>
+    <span class="kr">return</span><span class="p">(</span>as.logical<span class="p">(</span>d<span class="p">))</span>
+<span class="p">}</span>
+registerPlugins<span class="p">(</span>fun<span class="o">=</span>.ppnegGate<span class="p">,</span> methodName<span class="o">=</span><span class="s">&#39;ppnegGate&#39;</span><span class="p">,</span> dep<span class="o">=</span><span class="kc">NA</span><span class="p">,</span> <span class="s">&quot;preprocessing&quot;</span><span class="p">)</span>
 </pre></div>
-
+</td></tr></table>
             </div>
             <!-- /.entry-content -->
 	    <div id="commentswrap">
@@ -167,6 +181,11 @@ registerPlugins(fun=.ppnegGate, methodName=&#39;ppnegGate&#39;, dep=NA, &quot;pr
                 <li class="list-group-item"><a href="http://jfrelinger.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                     <ul class="list-group " id="tags">
                         <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/r.html">
+                                R
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/python.html">
                                 python
                             </a>
@@ -177,18 +196,13 @@ registerPlugins(fun=.ppnegGate, methodName=&#39;ppnegGate&#39;, dep=NA, &quot;pr
                             </a>
                         </li>
                         <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/iterators.html">
-                                iterators
-                            </a>
-                        </li>
-                        <li class="list-group-item tag-4">
-                            <a href="http://jfrelinger.github.io/tag/r.html">
-                                R
-                            </a>
-                        </li>
-                        <li class="list-group-item tag-4">
                             <a href="http://jfrelinger.github.io/tag/opencyto.html">
                                 OpenCyto
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/iterators.html">
+                                iterators
                             </a>
                         </li>
                     </ul>
