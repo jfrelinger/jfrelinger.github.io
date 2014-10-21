@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Jacob Frelinger's Blog</title><link href="http://jfrelinger.github.io/" rel="alternate"></link><link href="http://jfrelinger.github.io/feeds/python-programing.atom.xml" rel="self"></link><id>http://jfrelinger.github.io/</id><updated>2014-10-19T18:40:00-07:00</updated><entry><title></title><link href="http://jfrelinger.github.io/Writing%20a%20prime%20number%20iterator%20in%20python.html" rel="alternate"></link><updated>2014-10-19T18:40:00-07:00</updated><author><name>Jacob Frelinger</name></author><id>tag:jfrelinger.github.io,2014-10-19:Writing a prime number iterator in python.html</id><summary type="html">&lt;p&gt;One of &lt;a class="reference external" href="http://www.codeeval.com"&gt;CodeEval.com&amp;#8217;s&lt;/a&gt; challenges involves finding prime numbers that are a palindrome.  Instead of the usual method of generating the fixed sets of prime numbers, I thought it would employ writing a  &lt;a class="reference external" href="http://www.python.org"&gt;Python&lt;/a&gt; iterator to generate the prime numbers to abstract it out.  The code below accepts an upper bound so the iterator stops eventually and uses a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Trial_division"&gt;trial division&lt;/a&gt; algorithm to find all the&amp;nbsp;primes.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Jacob Frelinger's Blog</title><link href="http://jfrelinger.github.io/" rel="alternate"></link><link href="http://jfrelinger.github.io/feeds/articles.atom.xml" rel="self"></link><id>http://jfrelinger.github.io/</id><updated>2014-10-20T20:00:00-07:00</updated><entry><title></title><link href="http://jfrelinger.github.io/Using%20negative%20control%20to%20set%20gates%20in%20OpenCyto.html" rel="alternate"></link><updated>2014-10-20T20:00:00-07:00</updated><author><name>Jacob Frelinger</name></author><id>tag:jfrelinger.github.io,2014-10-20:Using negative control to set gates in OpenCyto.html</id><summary type="html">&lt;p&gt;In many case/control experiments in flow cytometry, for example pre and post
+treatment samples, gates often are placed at specified quantiles (typically 99%) to identify differences in between the case and control tubes.  This can be done in &lt;a class="reference external" href="http://opencyto.org"&gt;OpenCyto&lt;/a&gt; by using a preprocessing function to identify events from the control, and then only use those events to perform a quantile&amp;nbsp;gate.&lt;/p&gt;
+&lt;p&gt;The code below expects samples to be collapsed by patient and samples to have
+pData that sets a boolean variable called control that indicates which sample
+is control.  Then in your template file, you set the gating method to
+&amp;#8216;negGate&amp;#8217;, and the preprocessing function to&amp;nbsp;&amp;#8216;ppnegGate&amp;#8217;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;.negGate &amp;lt;- function(fr, pp_res, xChannel=NA, yChannel=NA, filterId=&amp;quot;ppgate&amp;quot;, ...){
+    my_gate &amp;lt;- openCyto:::quantileGate(fr[pp_res,],stain=yChannel, filter_id=filterId, ...)
+
+    return(my_gate)
+}
+registerPlugins(fun=.negGate,methodName=&amp;#39;negGate&amp;#39;,dep=NA)
+
+.ppnegGate &amp;lt;- function(fs, gs, gm, xChannel, yChannel, groupBy, isCollapse, ...) {
+    d &amp;lt;- c()
+    for(i in c(1:length(fs))) {
+        d = c(d,rep.int(pData(fs[i])$control,nrow(exprs(fs[[i]]))))
+    }
+    return(as.logical(d))
+}
+registerPlugins(fun=.ppnegGate, methodName=&amp;#39;ppnegGate&amp;#39;, dep=NA, &amp;quot;preprocessing&amp;quot;)
+&lt;/pre&gt;&lt;/div&gt;
+</summary><category term="R"></category><category term="OpenCyto"></category></entry><entry><title></title><link href="http://jfrelinger.github.io/Writing%20a%20prime%20number%20iterator%20in%20python.html" rel="alternate"></link><updated>2014-10-19T18:40:00-07:00</updated><author><name>Jacob Frelinger</name></author><id>tag:jfrelinger.github.io,2014-10-19:Writing a prime number iterator in python.html</id><summary type="html">&lt;p&gt;One of &lt;a class="reference external" href="http://www.codeeval.com"&gt;CodeEval.com&amp;#8217;s&lt;/a&gt; challenges involves finding prime numbers that are a palindrome.  Instead of the usual method of generating the fixed sets of prime numbers, I thought it would employ writing a  &lt;a class="reference external" href="http://www.python.org"&gt;Python&lt;/a&gt; iterator to generate the prime numbers to abstract it out.  The code below accepts an upper bound so the iterator stops eventually and uses a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Trial_division"&gt;trial division&lt;/a&gt; algorithm to find all the&amp;nbsp;primes.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PrimeIter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="sd"&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
