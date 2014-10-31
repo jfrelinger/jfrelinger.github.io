@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head>
+    <title> - Jacob Frelinger's Blog</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://jfrelinger.github.io/Using dimension reduction techniques with fcm.html">
+
+        <meta name="author" content="Jacob Frelinger" />
+        <meta name="keywords" content="python,flow cytometry,dimension reduction,fcm" />
+        <meta name="description" content="For very large number of markers, its often useful to use dimension reduction techniques to reduce the number of markers using methods like PCA or t-SNE" />
+
+    <!-- Enable latex plugin -->
+
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://jfrelinger.github.io/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="http://jfrelinger.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://jfrelinger.github.io/theme/css/pygments/solarizedlight.css" rel="stylesheet">
+        <link href="http://jfrelinger.github.io/theme/css/typogrify.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://jfrelinger.github.io/theme/css/style.css" type="text/css"/>
+
+        <link href="http://jfrelinger.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Jacob Frelinger's Blog ATOM Feed"/>
+
+
+        <link href="http://jfrelinger.github.io/feeds/Articles.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Jacob Frelinger's Blog Articles ATOM Feed"/>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://jfrelinger.github.io/" class="navbar-brand">
+Jacob Frelinger's Blog            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="http://jfrelinger.github.io/pages/about-jacob.html">
+                             About&nbsp;Jacob
+                          </a></li>
+                         <li><a href="http://jfrelinger.github.io/pages/cv.html">
+                             <span class="caps">C.V.</span>
+                          </a></li>
+                        <li class="active">
+                            <a href="http://jfrelinger.github.io/category/articles.html">Articles</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://jfrelinger.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://jfrelinger.github.io/Using dimension reduction techniques with fcm.html"
+                       rel="bookmark"
+                       title="Permalink to ">
+                        
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2014-10-29T18:40:00"> Wed 29 October 2014</time>
+    </span>
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://jfrelinger.github.io/tag/python.html">python</a>
+        /
+	<a href="http://jfrelinger.github.io/tag/flow-cytometry.html">flow cytometry</a>
+        /
+	<a href="http://jfrelinger.github.io/tag/dimension-reduction.html">dimension reduction</a>
+        /
+	<a href="http://jfrelinger.github.io/tag/fcm.html">fcm</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>With the growing number of markers that can be used in flow cytometry panels, data analysis often runs into difficulties due to the high dimensional nature of the data.  Currently fluorescent based flow techniques can measure over 20 markers, while CyTOF can measure over 40.  Because of this dimensional reduction techniques have become an interesting area of investigation in computational flow cytometry.  In this article I&#8217;ll describe how to use <span class="caps">PCA</span> in the python fcm&nbsp;library.</p>
+<p>For an example we&#8217;ll take a simple four dimensional (2 scatters and 2 flourescent markers) sample and reduce it to two dimensions.  So lets take a look at our data before&nbsp;transformation</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">fcm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">fcm.graphics</span> <span class="kn">import</span> <span class="n">bilinear_interpolate</span> <span class="k">as</span> <span class="n">blt</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">fcm</span><span class="o">.</span><span class="n">loadFCS</span><span class="p">(</span><span class="s">&#39;3FITC_4PE_004.fcs&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]):</span>
+    <span class="c"># c is the density estimated color</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">blt</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[:,</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[:,</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<p>which looks&nbsp;like:</p>
+<img alt="" src="images/pca_plot1.png" />
+<p><a class="reference external" href="http://scikits-learn.org">scikits learn</a> provide a convenient way to do <span class="caps">PCA</span> projections, so that&#8217;s what we&#8217;ll&nbsp;use.</p>
+<div class="highlight"><pre><span class="n">pcaer</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">pcaer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">pcaer</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">)</span> <span class="c"># should be  approx .7 and .2</span>
+
+<span class="c">#project data</span>
+<span class="n">proj_x</span> <span class="o">=</span> <span class="n">pcaer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">blt</span><span class="p">(</span><span class="n">proj_x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">proj_x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">proj_x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">proj_x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;PCA 1&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;PCA 2&#39;</span><span class="p">)</span>
+</pre></div>
+<p>which gives the follow&nbsp;picture</p>
+<img alt="" src="images/pca_plot2.png" />
+<p>Now lets add this projected data to the data&nbsp;object.</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fcm.core.tree</span> <span class="kn">import</span> <span class="n">TransformNode</span>
+
+<span class="c"># create a new node for the tree in the fcmdata object</span>
+<span class="n">node</span> <span class="o">=</span> <span class="n">TransformNode</span><span class="p">(</span><span class="s">&#39;PCA&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">get_cur_node</span><span class="p">(),</span> <span class="n">proj_x</span><span class="p">)</span>
+<span class="n">node</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;PCA 1&#39;</span><span class="p">,</span> <span class="s">&#39;PCA 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;PCA 2&#39;</span><span class="p">,</span> <span class="s">&#39;PCA 2&#39;</span><span class="p">)]</span>
+
+<span class="c">#add it to the tree</span>
+<span class="n">x</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">node</span><span class="p">)</span>
+</pre></div>
+<p>Now it&#8217;s part of the data&nbsp;tree.</p>
+<p>For fun, lets see how the projected data events correspond with the original unprojected data.  We&#8217;ll fit a mixture of Gaussian distributions to the projected data, and see
+how the classified events look in the unprojected space.  Lets start with fitting the mixture model and looking at&nbsp;that.</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">fcm.statistics</span> <span class="kn">as</span> <span class="nn">stats</span>
+
+<span class="c">#make sure we&#39;re looking at the pca data</span>
+<span class="n">x</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="s">&#39;PCA&#39;</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">DPMixtureModel</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># turn in label switch</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="c"># generate a mixture model</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">average</span><span class="p">()</span> <span class="c"># average over mcmc draws</span>
+
+<span class="c"># associate events</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">)</span>
+<span class="n">mus</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mus</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mus</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">mus</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+<img alt="" src="images/pca_plot3.png" />
+<p>Now lets look at the data in the original&nbsp;space</p>
+<div class="highlight"><pre><span class="n">x</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="s">&#39;root&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="c"># plot each pairwise set of channels</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[:,</span> <span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+</pre></div>
+<img alt="" src="images/pca_plot4.png" />
+
+            </div>
+            <!-- /.entry-content -->
+	    <div id="commentswrap">
+<div id="comments"></div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="https://apis.google.com/js/plusone.js"></script>
+    <script>
+        $(document).ready(function () {
+            gapi.comments.render('comments', {
+                href: window.location,
+                width: '600',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
+    });
+    </script>
+
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3 well well-sm" id="sidebar">
+
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+                <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+                  <ul class="list-group" id="social">
+                    <li class="list-group-item"><a href="https://github.com/jfrelinger"><i class="fa fa-github-square fa-lg"></i> Github</a></li>
+                    <li class="list-group-item"><a href="https://www.linkedin.com/in/jfrelinger"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+                  </ul>
+                </li>
+
+
+
+                <li class="list-group-item"><a href="http://jfrelinger.github.io/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                    <ul class="list-group " id="tags">
+                        <li class="list-group-item tag-1">
+                            <a href="http://jfrelinger.github.io/tag/python.html">
+                                python
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/fcm.html">
+                                fcm
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/dimension-reduction.html">
+                                dimension reduction
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/flow-cytometry.html">
+                                flow cytometry
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/r.html">
+                                R
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/opencyto.html">
+                                OpenCyto
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/iterators.html">
+                                iterators
+                            </a>
+                        </li>
+                        <li class="list-group-item tag-4">
+                            <a href="http://jfrelinger.github.io/tag/prime-numbers.html">
+                                prime numbers
+                            </a>
+                        </li>
+                    </ul>
+                </li>    
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://python.org/" target="_blank">
+                Python.org
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="https://code.google.com/p/py-fcm/" target="_blank">
+                fcm
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://opencyto.org" target="_blank">
+                OpenCyto
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://getpelican.com/" target="_blank">
+                Pelican
+            </a>
+        </li>
+      </ul>
+    </li>
+
+        </ul>
+    </section>
+
+</aside>        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2014 Jacob Frelinger
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://jfrelinger.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://jfrelinger.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://jfrelinger.github.io/theme/js/respond.min.js"></script>
+
+</body>
+</html>
